@@ -1,13 +1,26 @@
 import org.apache.spark.sql.{Row, SaveMode, SparkSession}
+import org.apache.log4j.Logger
+import org.apache.log4j.Level
+import org.apache.spark.SparkConf
 
 object HiveTest extends App{
 
+//set looging level to error 
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
+ // create spark config object
+  val sparkConf= new SparkConf()
+
+  sparkConf.setAppName("Credit_Card_Fraud_Detection")
+
+  sparkConf.setMaster("local[2]")
+
+  sparkConf.set("hive.metastore.uris", "thrift://localhost:9083")
+  
+  // use sparkconfig object to create spark session
 val spark = SparkSession
   .builder()
-  .appName("Spark Hive Example")
-  .master("local[2]")
-  .config("hive.metastore.uris","thrift://localhost:9083")
+  .config(sparkConf)
   .enableHiveSupport()
   .getOrCreate()
 
@@ -15,6 +28,6 @@ import spark.implicits._
 import spark.sql
 // start writing the hive queries
 
-sql("show databases")
+sql("show databases").show
 }
 
